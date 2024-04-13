@@ -1,8 +1,10 @@
 import java.text.Format
 
-class Passage(var PassageIndex: String, var IncludePassage: Boolean,
-              var CorrectGuesses: Long, var TotalGuesses: Long, var Passage: String) {
+class Passage(var PassageIndex: String, var Passage: String) {
 
+    var IncludePassage: Boolean = false
+    var CorrectGuesses: Long = 0
+    var TotalGuesses: Long = 0
     var CorrectPercent: Double = 0.00
 
     public fun Correct(){

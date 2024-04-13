@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.bibleflashcards.databinding.FragmentHomeBinding
 import android.content.Context
+import  java.io.InputStreamReader
+import  java.io.BufferedReader
 import java.io.IOException
 import kotlin.random.Random
 
@@ -53,13 +55,39 @@ class HomeFragment : Fragment() {
         var BtnWrong: Button = binding.BtnWrong
         var BtnRight: Button = binding.BtnRight
 
+
+
+        // Working on the SaveFile Functions 04/13/24 12:37PM PST
+        var SaveFile = "SaveFile.bibleflashcards"
+        var SaveFileContents = "Hello World!"
+        requireContext().openFileOutput(SaveFile, Context.MODE_PRIVATE).use {
+            it.write(SaveFileContents.toByteArray())
+        }
+        var fileContents: String = ""
+        try {
+            val fis = context?.openFileInput(SaveFile)
+            val isr = InputStreamReader(fis)
+            val bufferedReader = BufferedReader(isr)
+            val sb = StringBuilder()
+            var line: String? = bufferedReader.readLine()
+            while (line != null) {
+                sb.append(line)
+                line = bufferedReader.readLine()
+            }
+            fileContents = sb.toString()
+            // Now fileContents contains the contents of the file
+        } catch (e: IOException) {
+            // Handle the exception
+        }
+
+
+
         var txtBibleVerses = readAssetFile(requireContext(), "Passages.txt")
         var txtBibleVersesAry = txtBibleVerses.split("\n")
 
         for (line: String in txtBibleVersesAry) {
             var LineSplit = line.split("|")
-            Passages.add(Passage(LineSplit[0],LineSplit[1].toBoolean(),
-                LineSplit[2].toLong(),LineSplit[3].toLong(),LineSplit[4]))
+            Passages.add(Passage(LineSplit[0],LineSplit[1]))
         }
 
         var RandVerseIndex: Int = Random.nextInt(Passages.count())
@@ -101,6 +129,7 @@ class HomeFragment : Fragment() {
         BtnRight.setOnClickListener {
             Passages[RandVerseIndex].Correct()
             textViewCorrectRatio.text = Passages[RandVerseIndex].Get_Correct_Ratio()
+            TViewPassage.text = fileContents // Working on the SaveFile Functions 04/13/24 12:37PM PST
         }
 
         return root
