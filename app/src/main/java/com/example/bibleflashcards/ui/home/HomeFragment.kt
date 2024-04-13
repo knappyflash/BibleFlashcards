@@ -75,7 +75,7 @@ class HomeFragment : Fragment() {
                 return "0"
             }
         }
-          
+
         textViewCorrectRatio.text = Passages[RandVerseIndex].Get_Correct_Ratio()
 
         BtnNextVerse.setOnClickListener {
