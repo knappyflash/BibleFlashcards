@@ -3,9 +3,9 @@ import java.text.Format
 class Passage(var PassageIndex: String, var Passage: String) {
 
     var IncludePassage: Boolean = false
-    var CorrectGuesses: Long = 0
-    var TotalGuesses: Long = 0
-    var CorrectPercent: Double = 0.00
+    public var CorrectGuesses: Long = 0
+    public var TotalGuesses: Long = 0
+    public var CorrectPercent: Double = 0.00
 
     public fun Correct(){
         CorrectGuesses = CorrectGuesses + 1

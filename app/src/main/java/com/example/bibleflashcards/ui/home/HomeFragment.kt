@@ -45,6 +45,8 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        var ReadFileContents: String = ""
+
         var Passages: MutableList<Passage> = mutableListOf()
 
         var TViewPassageIndex: TextView = binding.TViewPassageIndex
@@ -54,31 +56,6 @@ class HomeFragment : Fragment() {
         var BtnShowAnswer: Button = binding.BtnShowAnswer
         var BtnWrong: Button = binding.BtnWrong
         var BtnRight: Button = binding.BtnRight
-
-
-
-        // Working on the SaveFile Functions 04/13/24 12:37PM PST
-        var SaveFile = "SaveFile.bibleflashcards"
-        var SaveFileContents = "Hello World!"
-        requireContext().openFileOutput(SaveFile, Context.MODE_PRIVATE).use {
-            it.write(SaveFileContents.toByteArray())
-        }
-        var fileContents: String = ""
-        try {
-            val fis = context?.openFileInput(SaveFile)
-            val isr = InputStreamReader(fis)
-            val bufferedReader = BufferedReader(isr)
-            val sb = StringBuilder()
-            var line: String? = bufferedReader.readLine()
-            while (line != null) {
-                sb.append(line)
-                line = bufferedReader.readLine()
-            }
-            fileContents = sb.toString()
-            // Now fileContents contains the contents of the file
-        } catch (e: IOException) {
-            // Handle the exception
-        }
 
 
 
@@ -95,6 +72,51 @@ class HomeFragment : Fragment() {
 
         TViewPassageIndex.text = Passages[RandVerseIndex].PassageIndex
         TViewPassage.text = ""
+
+        // Testing Save/Read File Functions
+        fun Save_Data() {
+            var SaveFile = "SaveFile.bibleflashcards"
+            var SaveFileContents: String = ""
+            for (passage: Passage in Passages) {
+                SaveFileContents = SaveFileContents + passage.PassageIndex + "|" +
+                        passage.CorrectGuesses + "|" + passage.TotalGuesses + ","
+            }
+            requireContext().openFileOutput(SaveFile, Context.MODE_PRIVATE).use {
+                it.write(SaveFileContents.toByteArray())
+            }
+        }
+
+        // Testing Save/Read File Functions
+        fun Read_Data() {
+            var ReadFile = "SaveFile.bibleflashcards"
+            try {
+                val fis = context?.openFileInput(ReadFile)
+                val isr = InputStreamReader(fis)
+                val bufferedReader = BufferedReader(isr)
+                val sb = StringBuilder()
+                var line: String? = bufferedReader.readLine()
+                while (line != null) {
+                    sb.append(line)
+                    line = bufferedReader.readLine()
+                }
+                ReadFileContents = sb.toString()
+                // Now fileContents contains the contents of the file
+                var ReadFileContentsAry = ReadFileContents.split(",")
+                for (passage: Passage in Passages) {
+                    for (line in ReadFileContentsAry) {
+                        var SplitLine = line.split("|")
+                        if (SplitLine[0] == passage.PassageIndex) {
+                            passage.CorrectGuesses = SplitLine[1].toLong()
+                            passage.TotalGuesses = SplitLine[2].toLong()
+                        }
+                    }
+                }
+
+            } catch (e: IOException) {
+                // Handle the exception
+            }
+        }
+        Read_Data()
 
         fun Get_Correct_Percentage(MyCorrect: Long, MyTotal: Long): String {
             try {
@@ -124,12 +146,15 @@ class HomeFragment : Fragment() {
         BtnWrong.setOnClickListener {
             Passages[RandVerseIndex].Wrong()
             textViewCorrectRatio.text = Passages[RandVerseIndex].Get_Correct_Ratio()
+            Save_Data()
         }
 
         BtnRight.setOnClickListener {
             Passages[RandVerseIndex].Correct()
             textViewCorrectRatio.text = Passages[RandVerseIndex].Get_Correct_Ratio()
-            TViewPassage.text = fileContents // Working on the SaveFile Functions 04/13/24 12:37PM PST
+
+            // Testing Save/Read File Functions
+            Save_Data()
         }
 
         return root
