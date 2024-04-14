@@ -139,7 +139,7 @@ class HomeFragment : Fragment() {
         }
 
         BtnShowAnswer.setOnClickListener {
-            TViewPassage.text = Passages[RandVerseIndex].Passage + Passages[RandVerseIndex].Passage
+            TViewPassage.text = Passages[RandVerseIndex].Passage
             textViewCorrectRatio.text = Passages[RandVerseIndex].Get_Correct_Ratio()
         }
 
